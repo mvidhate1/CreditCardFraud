@@ -3,6 +3,17 @@ from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import RandomOverSampler, SMOTE
 
 def main(df, type, features=None, target=None):
+    '''
+    Balance the dataset.
+    :param
+        df: dataframe
+        type: balancing method
+        features: non-class attributes
+        target: class attribute
+    :return:
+        balanced dataframe.
+    '''
+
     print('\nBEFORE DATASET BALANCING\n', df.groupby(['isFraud']).count().iloc[:, 0])
     datasets = '/data/datasets/'
 

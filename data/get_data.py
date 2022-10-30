@@ -58,20 +58,18 @@ def get_databuffer(fname):
     return df
 
 def main():
-    wd = '/data/datasets/'
+    datasets = '/data/datasets/'
 
     # get json
-    fname = get_data(wd + 'transactions.zip')
+    fname = get_data(datasets + 'transactions.zip')
 
     # convert to dataframe
     df = get_databuffer(fname)
 
-    # store as csv (for submission)
-    df.to_csv('.' + wd + 'transactions.csv')
+    # store as csv (for quick access)
+    df.to_csv('.' + datasets + 'transactions.csv')
 
-    # intermediary file (used for easy access later on)
-    df.to_pickle('.' + wd + 'transactions.pkl')
-
-    df = pd.read_pickle('.' + wd + 'transactions.pkl')
+    # df = pd.read_csv('.' + wd + 'transactions.csv')
+    df = df.drop(columns=df.columns[0], axis=1, inplace=True)
 
     return df

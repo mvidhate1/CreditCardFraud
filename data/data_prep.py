@@ -61,10 +61,9 @@ def data_clean(df):
 def data_prep(df):
     '''
     Preprocess of the dataset.
-        - insert new columns (overDraw, overSeas, cvvMatch)
-        -
+        - insert new columns
     :param
-        df: dataframe to be cleaned and preprocessed.
+        df: dataframe
     :return:
         preprocessed dataframe.
     '''
@@ -88,23 +87,26 @@ def data_prep(df):
     df.insert(6, 'transactionMonth', df['transactionDateTime'].dt.month)
     df.insert(7, 'transactionDate', df['transactionDateTime'].dt.day)
     df.insert(8, 'transactionHour', df['transactionDateTime'].dt.hour)
+    df = df.drop('transactionDateTime', axis=1)
 
-    new_features.append('storeID')
-    df.insert(11, 'storeID', 'unknown')
-    for i in range(0, len(df)):
-        item = df.loc[i]
-        merchantName = item['merchantName']
-        merchantName = merchantName.split(' #')
-        if len(merchantName) == 2:
-            df.at[i, 'storeID'] = merchantName[1]
-        df.at[i, 'merchantName'] = str(merchantName[0])
+    # new_features.append('storeID')
+    # df.insert(10, 'storeID', 'unknown')
+    # for i in range(0, len(df)):
+    #     item = df.loc[i]
+    #     merchantName = item['merchantName']
+    #     merchantName = merchantName.split(' #')
+    #     if len(merchantName) == 2:
+    #         df.at[i, 'storeID'] = merchantName[1]
+    #     df.at[i, 'merchantName'] = str(merchantName[0])
+    # doesn't make sense in the larger picture
+    df = df.drop('merchantName', axis=1)
 
     new_features.append('overSeas')
-    df.insert(14, 'overSeas', 0)
+    df.insert(11, 'overSeas', 0)
     df['overSeas'] = np.where(df['acqCountry'] != df['merchantCountryCode'], 1, df['overSeas'])
 
     new_features.append('cvvMatch')
-    df.insert(23, 'cvvMatch', 0)
+    df.insert(20, 'cvvMatch', 0)
     df['cvvMatch'] = np.where(df['cardCVV'] == df['enteredCVV'], 1, df['cvvMatch'])
 
     # don't need to do this
@@ -112,45 +114,30 @@ def data_prep(df):
     # df['expirationDateKeyInMatch'] = df['expirationDateKeyInMatch'].astype(int)
     # df['isFraud'] = df['isFraud'].astype(int)
 
+    # dropping columns that don't are not relevant
+    df = df.drop(['currentExpDate','accountOpenDate','dateOfLastAddressChange'], axis=1)
+
     print('New Features : ', new_features)
     return df
 
-# not using because it would increase attribute number insanely
-def add_dummies(df, cat_vars):
-
-    columns = df.columns.values
-    # cat_vars = everything you want to create a dummy for
-    for var in cat_vars:
-        # print(var)
-        cat_list = 'var'+'_'+var
-        cat_list = pd.get_dummies(df[var], prefix=var)
-        # print(cat_list)
-        # print('-----')
-        df = df.join(cat_list)
-
-    data_vars = df.columns.values.tolist()
-    to_keep = [i for i in data_vars if i not in cat_vars]
-    dummies = [i for i in data_vars if i not in columns]
-    df_final = df[to_keep]
-
-    return df_final, dummies
-
 def main(df):
-    wd = '/data/datasets/'
+    datasets = '/data/datasets/'
 
     # data cleaning
     new_df = data_clean(df)
 
-    # NOT USING RIGHT NOW
     # data preprocessing
     new_df = data_prep(new_df)
-    # cat_vars = ['acqCountry', 'merchantCountryCode']
-    # new_df, dummies = add_dummies(new_df, cat_vars)
+
+    # get dummies - need it for classification
+    vars = ['acqCountry', 'merchantCountryCode',
+            'posEntryMode', 'posConditionCode', 'merchantCategoryCode',
+            'transactionType']
+    new_df = pd.get_dummies(new_df, columns=vars, drop_first=True)
 
     # store as csv (for quick access)
-    new_df.to_csv('.' + wd + 'transactions_cleaned.csv')
+    new_df.to_csv('.' + datasets + 'transactions_cleaned.csv')
 
-    new_df = pd.read_csv('.' + wd + 'transactions_cleaned.csv', index_col=[0])
     print('\nATTRIBUTES AFTER PREPROCESSING: ', new_df.columns.values)
 
     return new_df
