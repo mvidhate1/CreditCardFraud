@@ -62,6 +62,7 @@ def data_prep(df):
     '''
     Preprocess of the dataset.
         - insert new columns
+        - remove columns that make no sense for classification
     :param
         df: dataframe
     :return:
@@ -83,10 +84,11 @@ def data_prep(df):
     #   date  - maybe scammers know when people get paid?
     #   hour  - maybe they like doing shady stuff at night?
     #   not using year, minute and sec because that doesn't make any sense
-    new_features.extend(['transactionMonth','transactionDate','transactionHour'])
+    new_features.extend(['transactionMonth','transactionDay','transactionHour'])
     df.insert(6, 'transactionMonth', df['transactionDateTime'].dt.month)
-    df.insert(7, 'transactionDate', df['transactionDateTime'].dt.day)
+    df.insert(7, 'transactionDay', df['transactionDateTime'].dt.day)
     df.insert(8, 'transactionHour', df['transactionDateTime'].dt.hour)
+    # having an exact date is not good classification
     df = df.drop('transactionDateTime', axis=1)
 
     # new_features.append('storeID')
@@ -98,7 +100,7 @@ def data_prep(df):
     #     if len(merchantName) == 2:
     #         df.at[i, 'storeID'] = merchantName[1]
     #     df.at[i, 'merchantName'] = str(merchantName[0])
-    # doesn't make sense in the larger picture
+    # not looking at particular merchants right now. only the merchant industry.
     df = df.drop('merchantName', axis=1)
 
     new_features.append('overSeas')
@@ -118,6 +120,13 @@ def data_prep(df):
     df = df.drop(['currentExpDate','accountOpenDate','dateOfLastAddressChange'], axis=1)
 
     print('New Features : ', new_features)
+
+    # Dropping columns that make no sense in classification
+    useless_features = ['accountNumber',
+                        'customerId']
+    df = df.drop(useless_features, axis=1)
+    print('\nATTRIBUTES LEFT: ', df.columns.to_list())
+
     return df
 
 def main(df):
@@ -131,8 +140,8 @@ def main(df):
 
     # get dummies - need it for classification
     vars = ['acqCountry', 'merchantCountryCode',
-            'posEntryMode', 'posConditionCode', 'merchantCategoryCode',
-            'transactionType']
+            'posEntryMode', 'posConditionCode',
+            'merchantCategoryCode', 'transactionType']
     new_df = pd.get_dummies(new_df, columns=vars, drop_first=True)
 
     # store as csv (for quick access)
