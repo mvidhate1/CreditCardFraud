@@ -16,23 +16,23 @@ def choose_model(df, model, split_type, feature_method, features, target, predic
     conf_mat = performance.main(X_test, y_test, target, predicted)
 
 def main(df, features, target, predicted, feature_methods):
-    # # classification (stratified k-fold without feature selection)
-    # print("\n Classifier alone - Stratified 10-fold Cross-validation - No feature selection")
-    # choose_model(df=df, split_type=0, feature_method=None,
-    #              model='logreg', features=features, target=target, predicted=predicted,
-    #              random_state=100, additional=[10])
-    # choose_model(df=df, split_type=0, feature_method=None,
-    #              model='kNN', features=features, target=target, predicted=predicted,
-    #              random_state=100, additional=[10])
-    # choose_model(df=df, split_type=0, feature_method=None,
-    #              model='gnbayes', features=features, target=target, predicted=predicted,
-    #              random_state=100, additional=[10])
-    # choose_model(df=df, split_type=0, feature_method=None,
-    #              model='decitree', features=features, target=target, predicted=predicted,
-    #              random_state=100, additional=[10])
-    # choose_model(df=df, split_type=0, feature_method=None,
-    #              model='randfor', features=features, target=target, predicted=predicted,
-    #              random_state=100, additional=[10])
+    # classification (stratified k-fold without feature selection)
+    print("\n Classifier alone - Stratified 10-fold Cross-validation - No feature selection")
+    choose_model(df=df, split_type=0, feature_method=None,
+                 model='logreg', features=features, target=target, predicted=predicted,
+                 random_state=100, additional=[10])
+    choose_model(df=df, split_type=0, feature_method=None,
+                 model='kNN', features=features, target=target, predicted=predicted,
+                 random_state=100, additional=[10])
+    choose_model(df=df, split_type=0, feature_method=None,
+                 model='gnbayes', features=features, target=target, predicted=predicted,
+                 random_state=100, additional=[10])
+    choose_model(df=df, split_type=0, feature_method=None,
+                 model='decitree', features=features, target=target, predicted=predicted,
+                 random_state=100, additional=[10])
+    choose_model(df=df, split_type=0, feature_method=None,
+                 model='randfor', features=features, target=target, predicted=predicted,
+                 random_state=100, additional=[10])
 
     # data split (66-34)
     for method in feature_methods:

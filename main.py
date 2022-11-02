@@ -42,9 +42,8 @@ def main():
     print("\nDATA DUPLICATION")
     # dd_df = dg.main(temp, 1)
     dd_df = pd.read_csv('./data/datasets/transactions_balanced_duplication.csv', index_col=[0])
-    # print(dd_df.shape)
-    # bm.main(dd_df, features, target, predicted)
-
+    print(dd_df.shape)
+    bm.main(dd_df, features, target, predicted, ['kbest-f_classif', 'kbest-mutual', 'rfecv', 'sfm', 'sfs'])
 
     # # random over-sampling
     print("\nRANDOM OVER-SAMPLING")
