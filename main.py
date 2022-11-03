@@ -11,23 +11,23 @@ from sklearn.model_selection import train_test_split
 
 
 def main():
-    # # get dataframe
-    # df = gd.main()
+    # get dataframe
+    df = gd.main()
 
     # # using intermediary file for easy & quick reading
     # df = pd.read_csv('./data/datasets/transactions.csv', index_col=[0])
     # print(df.shape)
 
-    # # quicklook at dataset summary
-    # eda.main(df)
+    # quicklook at dataset summary
+    eda.main(df)
 
-    # # data cleaning & preprocessing
-    # df = dp.main(df)
-    # print(df.dtypes)
-    # print(df.shape)
+    # data cleaning & preprocessing
+    df = dp.main(df)
+    print(df.dtypes)
+    print(df.shape)
 
     # # using intermediary file for easy & quick reading
-    df = pd.read_csv('./data/datasets/transactions_cleaned.csv', index_col=[0])
+    # df = pd.read_csv('./data/datasets/transactions_cleaned.csv', index_col=[0])
     # print(df.shape)
     # print(df.dtypes)
 
@@ -50,7 +50,7 @@ def main():
     # ros_df = dg.main(temp, 2, features=features, target=target)
     ros_df = pd.read_csv('./data/datasets/transactions_balanced_ros.csv', index_col=[0])
     # print(ros_df.shape)
-    # bm.main(ros_df, features, target, predicted, ['kbest'])
+    # bm.main(ros_df, features, target, predicted, ['kbest-f_classif', 'kbest-mutual', 'rfecv', 'sfm', 'sfs'])
 
 
     # # random under-sampling
@@ -66,6 +66,7 @@ def main():
     # smote_df = dg.main(temp, 4, features=features, target=target)
     smote_df = pd.read_csv('./data/datasets/transactions_balanced_smote.csv', index_col=[0])
     # print(smote_df.shape)
+    # bm.main(smote_df, features, target, predicted, ['kbest-f_classif', 'kbest-mutual', 'rfecv', 'sfm', 'sfs'])
 
 
 if __name__ == "__main__":

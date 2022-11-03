@@ -4,7 +4,6 @@ from sklearn.feature_selection import SelectKBest, f_classif, mutual_info_classi
                                       RFECV,\
                                       SelectFromModel,\
                                       SequentialFeatureSelector
-from sklearn.decomposition import PCA
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
@@ -173,37 +172,22 @@ def classify(df, model, features, target, predicted, random_state, split_type=No
             logreg.fit(X_train[ind], y_train[ind])
             X_test[ind][predicted] = logreg.predict(X_test[ind])
 
-    # kNN Classifier
-    elif model == 'kNN':
-        print('\nK-NEAREST NEIGHBORS')
+    # Extra Trees Classifier
+    elif model == 'etc':
+        print('\nEXTRA TREE CLASSIFIER')
         for ind in range(len(X_train)):
-            neigh = knn()
-            neigh.fit(X_train[ind], y_train[ind])
+            dt = ExtraTreesClassifier(criterion='entropy',
+                                        random_state=random_state)
+            dt.fit(X_train[ind], y_train[ind])
 
             # feature selection
             if feature_method != None:
-                additional.append(neigh)
-                X_train, X_test, y_train, y_test, fs = select_features(X_train, X_test, y_train, y_test, feature_method, additional=additional)
+                additional.append(dt)
+                X_train, X_test, y_train, y_test, fs = select_features(X_train, X_test, y_train, y_test, feature_method,
+                                                                       additional=additional)
 
-            # knn doesnt need training but have to use fit
-            # to follow standard format for classifiers
-            neigh.fit(X_train[ind], y_train[ind])
-            X_test[ind][predicted] = neigh.predict(X_test[ind])
-
-    # Gaussian Naive Bayes
-    elif model == 'gnbayes':
-        print('\nGAUSSIAN NAÏVE BAYES')
-        for ind in range(len(X_train)):
-            gnb = GaussianNB()
-            gnb.fit(X_train[ind], y_train[ind])
-
-            # feature selection
-            if feature_method != None:
-                additional.append(gnb)
-                X_train, X_test, y_train, y_test, fs = select_features(X_train, X_test, y_train, y_test, feature_method, additional=additional)
-
-            gnb.fit(X_train[ind], y_train[ind])
-            X_test[ind][predicted] = gnb.predict(X_test[ind])
+            dt.fit(X_train[ind], y_train[ind])
+            X_test[ind][predicted] = dt.predict(X_test[ind])
 
     # Decision Tree
     elif model == 'decitree':
@@ -236,23 +220,6 @@ def classify(df, model, features, target, predicted, random_state, split_type=No
             rf.fit(X_train[ind], y_train[ind])
             X_test[ind][predicted] = rf.predict(X_test[ind])
 
-    # Extra Trees Classifier
-    elif model == 'etc':
-        print('\nEXTRA TREE CLASSIFIER')
-        for ind in range(len(X_train)):
-            dt = ExtraTreesClassifier(criterion='entropy',
-                                        random_state=random_state)
-            dt.fit(X_train[ind], y_train[ind])
-
-            # feature selection
-            if feature_method != None:
-                additional.append(dt)
-                X_train, X_test, y_train, y_test, fs = select_features(X_train, X_test, y_train, y_test, feature_method,
-                                                                       additional=additional)
-
-            dt.fit(X_train[ind], y_train[ind])
-            X_test[ind][predicted] = dt.predict(X_test[ind])
-
     # Linear Discriminant Analysis
     elif model == 'lda':
         print('\nLINEAR DISCRIMINANT ANALYSIS')
@@ -268,6 +235,39 @@ def classify(df, model, features, target, predicted, random_state, split_type=No
 
             lda.fit(X_train[ind], y_train[ind])
             X_test[ind][predicted] = lda.predict(X_test[ind])
+
+    # Not using the below mentioned classifiers
+    # kNN Classifier
+    elif model == 'kNN':
+        print('\nK-NEAREST NEIGHBORS')
+        for ind in range(len(X_train)):
+            neigh = knn()
+            neigh.fit(X_train[ind], y_train[ind])
+
+            # feature selection
+            if feature_method != None:
+                additional.append(neigh)
+                X_train, X_test, y_train, y_test, fs = select_features(X_train, X_test, y_train, y_test, feature_method, additional=additional)
+
+            # knn doesnt need training but have to use fit
+            # to follow standard format for classifiers
+            neigh.fit(X_train[ind], y_train[ind])
+            X_test[ind][predicted] = neigh.predict(X_test[ind])
+
+    # Gaussian Naive Bayes
+    elif model == 'gnbayes':
+        print('\nGAUSSIAN NAÏVE BAYES')
+        for ind in range(len(X_train)):
+            gnb = GaussianNB()
+            gnb.fit(X_train[ind], y_train[ind])
+
+            # feature selection
+            if feature_method != None:
+                additional.append(gnb)
+                X_train, X_test, y_train, y_test, fs = select_features(X_train, X_test, y_train, y_test, feature_method, additional=additional)
+
+            gnb.fit(X_train[ind], y_train[ind])
+            X_test[ind][predicted] = gnb.predict(X_test[ind])
 
     # Quadratic Discriminant Analysis
     elif model == 'qda':
